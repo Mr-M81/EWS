@@ -1,17 +1,17 @@
 const express = require('express');
-const cors = require('cors');
+const connectDB = require('./config/config');
+const teacherController = require('./controllers/teacherController'); 
 
 const app = express();
-const PORT = 8080;
+const PORT = 8081;
 
-// Middleware
-app.use(cors());
+//MongoDB connection
+connectDB();
+
 app.use(express.json());
 
-// Sample route
-app.get('/', (req, res) => {
-  res.send('EWS Backend running 🚀');
-});
+// route
+app.use('/teachers', teacherController);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
