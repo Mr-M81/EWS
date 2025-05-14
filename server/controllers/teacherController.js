@@ -20,9 +20,11 @@ router.post('/login', async (req, res) => {
         const { email, password } = req.body;
         const teacher = await teacherService.loginSchoolTeacher(email, password);
 
+        // If credentials are wrong
         if (!teacher) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
+        console.log("Login approved");
 
         res.status(200).json(teacher);
     } catch (err) {

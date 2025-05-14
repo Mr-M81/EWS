@@ -1,5 +1,6 @@
 const express = require('express');
-const connectDB = require('./config/config');
+const connectDB = require('./config/mongoDBconfig');
+const cors = require('cors')
 const teacherController = require('./controllers/teacherController'); 
 
 const app = express();
@@ -9,6 +10,7 @@ const PORT = 8081;
 connectDB();
 
 app.use(express.json());
+app.use(cors()); 
 
 // route
 app.use('/teachers', teacherController);
