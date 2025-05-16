@@ -1,6 +1,7 @@
 const schoolTeacher = require('../model/teacherModel.js')
 const bcrypt = require('bcrypt')
 const { isEmailValid } = require('../utils/emailValidation');
+const jwt = require("jsonwebtoken");
 
 
 // Register a new school teacher
@@ -40,27 +41,33 @@ async function registerSchoolTeacher(full_name, identification_number, email, pa
 
 //TODO: Authentication API. 2 step authentication//
 // Login teacher
+const JWT_SECRET = "myjsonsecretkey101";
 
 async function loginSchoolTeacher(email, password) {
-    console.log("Server.teacherService,js: Looking up teacher with email:", email);  // Log email being queried
     const teacher = await schoolTeacher.findOne({ email });
 
     if (!teacher) {
-        console.log("No teacher found with that email");  // Log if no teacher is found
-        return null;
+        throw new Error('Teacher not found');
     }
 
-    console.log("Teacher found:", teacher);  // Log the teacher object found in DB
+    // Compare password with stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, teacher.password);
 
-    // Compare the entered password with the hashed password in DB
-    const isMatch = await bcrypt.compare(password, teacher.password);
+    if (!isPasswordValid) {
+        throw new Error('Invalid credentials');
+    }
 
-    console.log(isMatch ? "Password matched" : "Password did not match");  // Log password comparison result
+    // Generate a JWT token if the login is successful
+    const token = jwt.sign(
+        { teacher_id: teacher._id, teacher_name: teacher.full_name },  // Payload (include teacher details)
+        JWT_SECRET, // Secret key to sign the token
+        { expiresIn: '1h' } // Token expiration time (1 hour)
+    );
 
-    return isMatch ? teacher : null;  // Return teacher if credentials match, otherwise null
+    return { token, teacher };
 }
 
 module.exports = {
-    registerSchoolTeacher,
-    loginSchoolTeacher
-};  
+    loginSchoolTeacher, 
+    registerSchoolTeacher
+};

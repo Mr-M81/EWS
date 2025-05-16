@@ -18,7 +18,7 @@ const schoolTeacherSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  class_assigned: {
+  classAssigned: {
     type: String,
     required: true
   }
