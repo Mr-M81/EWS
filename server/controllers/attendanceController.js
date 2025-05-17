@@ -21,6 +21,8 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../utils/authMiddleware');
 const attendanceService = require('../service/attendanceService');
+const schoolTeacher = require('../model/teacherModel');
+const mongoose = require('mongoose');
 
 router.get('/students', authenticateToken, async (req, res) => {
   console.log("🧪 Checking token in /students route:");
@@ -76,6 +78,35 @@ router.post('/submit', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/latest', authenticateToken, async (req, res) => {
+  try {
+    const teacherId = req.teacher.teacher_id;
+
+    // Get teacher and collection
+    const teacher = await schoolTeacher.findById(teacherId);
+    if (!teacher) return res.status(404).json({ error: 'Teacher not found' });
+
+    const classAssigned = teacher.classAssigned;
+    const collectionName = `${classAssigned.trim().replace(/\s+/g, '').toLowerCase()}_attendance`;
+    const AttendanceModel = mongoose.connection.collection(collectionName);
+
+    // Get latest attendance session
+    const latestSession = await AttendanceModel
+      .find({ teacher_id: teacher._id })
+      .sort({ attendance_date: -1 })
+      .limit(1)
+      .toArray();
+
+    if (!latestSession || latestSession.length === 0) {
+      return res.status(404).json({ error: 'No attendance record found' });
+    }
+
+    res.json(latestSession[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch latest attendance' });
+  }
+});
 
 module.exports = router;
 

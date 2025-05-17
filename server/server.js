@@ -3,6 +3,7 @@ const connectDB = require('./config/mongoDBconfig');
 const cors = require('cors')
 const teacherController = require('./controllers/teacherController'); 
 const attendance = require('./controllers/attendanceController');
+const incidentController = require('./controllers/incidentController');
 const app = express();
 const PORT = 8081;
 
@@ -15,6 +16,7 @@ app.use(cors());
 // route
 app.use('/teachers', teacherController);
 app.use('/attendance', attendance);
+app.use('/incident', incidentController)
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

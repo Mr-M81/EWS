@@ -1,0 +1,109 @@
+/* Container styles */
+.attendance-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.attendance-main {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f4f6f8;
+}
+
+.attendance-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styles */
+.attendance-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.attendance-date {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Student list styles */
+.attendance-list {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-top: 30px;
+  padding-right: 10px;
+}
+
+.attendance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 50px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.present {
+  background-color: #22c55e;
+  color: white;
+}
+
+.absent {
+  background-color: #ef4444;
+  color: white;
+}
+
+.neutral {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.attendance-index {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.attendance-name {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.attendance-status {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Button styles */
+.attendance-action {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.attendance-save-btn {
+  padding: 12px 24px;
+  background-color: #1d4ed8;
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.attendance-save-btn:hover {
+  background-color: #1e40af;
+}
