@@ -28,16 +28,24 @@
 
 const schoolTeacher = require('../model/teacherModel');
 const mongoose = require('mongoose');
+const Attendance = require('../model/attendanceModel'); // full model
+const attendanceSchema = Attendance.schema; // ✅ get schema from model
+const { v4: uuidv4 } = require('uuid');
 
-// Convert "Class A" → "learners_classa"
+// 🔁 Helper: Convert "Class A" → "learners_classa"
 function mapClassToCollectionName(classAssigned) {
-  console.log("Mapping classAssigned:", classAssigned);
   const suffix = classAssigned.trim().replace(/\s+/g, '').toLowerCase(); 
   return `learners_${suffix}`;
 }
 
+// 🔁 Helper: Convert "Class A" → "classa_attendance"
+function mapClassToCollectionNameforAttendance(classAssigned) {
+  const suffix = classAssigned.trim().replace(/\s+/g, '').toLowerCase();
+  return `${suffix}_attendance`;
+}
+
+// ✅ Get students for the teacher's assigned class
 async function getStudentsForTeacher(teacherId) {
-  // Step 1: Find teacher
   const teacher = await schoolTeacher.findById(teacherId);
   if (!teacher) {
     throw new Error('Teacher not found');
@@ -48,20 +56,59 @@ async function getStudentsForTeacher(teacherId) {
     throw new Error('classAssigned is missing from teacher document');
   }
 
-  // Step 2: Determine collection name
   const collectionName = mapClassToCollectionName(classAssigned);
-
-  // Step 3: Dynamically get the collection
   const classCollection = mongoose.connection.collection(collectionName);
-
-  // Step 4: Get all students from that class
   const students = await classCollection.find({}).toArray();
 
   return { students, classAssigned, teacher };
 }
 
+// ✅ Save attendance into dynamic class-specific collection
+async function submitAttendance(teacherId, studentList) {
+  const teacher = await schoolTeacher.findById(teacherId);
+  if (!teacher) throw new Error('Teacher not found');
+
+  const classAssigned = teacher.classAssigned;
+  const collectionName = mapClassToCollectionNameforAttendance(classAssigned);
+
+  const DynamicAttendanceModel = mongoose.model(
+    collectionName,
+    attendanceSchema,
+    collectionName
+  );
+
+  // 🔍 Check for existing attendance record for today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set time to start of the day
+
+  const existing = await DynamicAttendanceModel.findOne({
+    teacher_id: teacher._id,
+    class_id: classAssigned,
+    attendance_date: { $gte: today }
+  });
+
+  if (existing) { // checks if attendance for the day has been done or not
+    throw new Error('Attendance for this class has already been recorded today.');
+  }
+
+  // ✅ Create new attendance record
+  const sessionId = `session_${Date.now()}_${uuidv4()}`;
+
+  const attendanceRecord = new DynamicAttendanceModel({
+    session_id: sessionId,
+    class_id: classAssigned,
+    teacher_id: teacher._id,
+    teacher_name: teacher.full_name,
+    students: studentList
+  });
+
+  await attendanceRecord.save();
+  return attendanceRecord;
+}
+
 module.exports = {
-  getStudentsForTeacher
+  getStudentsForTeacher,
+  submitAttendance
 };
 
 // module.exports = {

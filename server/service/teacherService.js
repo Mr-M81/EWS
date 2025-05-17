@@ -61,7 +61,8 @@ async function loginSchoolTeacher(email, password) {
     const token = jwt.sign(
         { teacher_id: teacher._id, teacher_name: teacher.full_name },  // Payload (include teacher details)
         JWT_SECRET, // Secret key to sign the token
-        { expiresIn: '1h' } // Token expiration time (1 hour)
+        { expiresIn: 3600 } // Token expiration time (1 hour)
+        
     );
 
     return { token, teacher };
