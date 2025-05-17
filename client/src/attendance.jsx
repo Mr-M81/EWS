@@ -19,11 +19,23 @@ export default function AttendancePage() {
   const [date, setDate] = useState(new Date().toLocaleDateString());
   const [showChart, setShowChart] = useState(false);
   const [latestData, setLatestData] = useState(null);
+  const [teacherName, setTeacherName] = useState('Teacher'); // Added teacherName state
   const navigate = useNavigate();
 
   // Fetch students from backend using token
   useEffect(() => {
     const token = localStorage.getItem('token');
+    
+    // Get teacher name from token if available
+    try {
+      const tokenData = JSON.parse(atob(token.split('.')[1]));
+      if (tokenData.teacher_name) {
+        setTeacherName(tokenData.teacher_name);
+      }
+    } catch (err) {
+      console.error('Error parsing token:', err);
+    }
+    
     axios
       .get('http://localhost:8081/attendance/students', {
         headers: { Authorization: `Bearer ${token}` }
@@ -79,43 +91,63 @@ export default function AttendancePage() {
       alert('❌ Failed to save attendance');
     }
   };
+  
   const fetchLatestAttendance = async () => {
-  const token = localStorage.getItem('token');
-  try {
-    const response = await axios.get('http://localhost:8081/attendance/latest', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    setLatestData(response.data);
-    setShowChart(true);
-  } catch (err) {
-    console.error(err);
-    alert('❌ Failed to load latest attendance');
-  }
-};
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get('http://localhost:8081/attendance/latest', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setLatestData(response.data);
+      setShowChart(true);
+    } catch (err) {
+      console.error(err);
+      alert('❌ Failed to load latest attendance');
+    }
+  };
 
+  const downloadAttendancePDF = () => {
+    try {
+      const doc = new jsPDF();
+      doc.setFontSize(18);
+      doc.text('Attendance Summary', 70, 10);
 
-const downloadAttendancePDF = () => {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text('Attendance Summary', 70, 10);
+      doc.setFontSize(12);
+      doc.text(`Date: ${date}`, 10, 20);
+      doc.text(`Teacher: ${teacherName}`, 10, 30);
 
-  doc.setFontSize(12);
-  doc.text(`Date: ${date}`, 10, 20);
-  doc.text(`Teacher: ${teacherName}`, 10, 30); 
+      let y = 50;
+      doc.text('Student Name', 10, y);
+      doc.text('Status', 150, y);
+      y += 10;
 
-  let y = 50;
-  doc.text('Student Name', 10, y);
-  doc.text('Status', 150, y);
-  y += 10;
+      // Add a horizontal line
+      doc.line(10, y-5, 200, y-5);
 
-  students.forEach((student, index) => {
-    doc.text(student.student_name, 10, y);
-    doc.text(student.status || 'N/A', 150, y);
-    y += 10;
-  });
+      // Use the correct data source based on context
+      const dataToUse = showChart && latestData ? latestData.students : students;
 
-  doc.save(`attendance-${date}.pdf`);
-};
+      dataToUse.forEach((student, index) => {
+        if (y > 280) { // Check if we need a new page
+          doc.addPage();
+          y = 20;
+          doc.text('Student Name', 10, y);
+          doc.text('Status', 150, y);
+          y += 10;
+          doc.line(10, y-5, 200, y-5);
+        }
+        
+        doc.text(student.student_name, 10, y);
+        doc.text(student.status || 'N/A', 150, y);
+        y += 10;
+      });
+
+      doc.save(`attendance-${date.replace(/\//g, '-')}.pdf`);
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      alert('Failed to generate PDF');
+    }
+  };
 
   // Count summary
   const presentCount = students.filter(s => s.status === 'Present').length;
@@ -167,42 +199,42 @@ const downloadAttendancePDF = () => {
           </div>
         </div>
         {!showChart && (
-  <div className="attendance-action">
-    <button onClick={fetchLatestAttendance} className="attendance-save-btn">
-      View Attendance Summary
-    </button>
-  </div>
-)}
+          <div className="attendance-action">
+            <button onClick={fetchLatestAttendance} className="attendance-save-btn">
+              View Attendance Summary
+            </button>
+          </div>
+        )}
 
-    {showChart && latestData && (
-    <div className="attendance-chart">
-        <h2>Summary for {new Date(latestData.attendance_date).toLocaleDateString()}</h2>
-        <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-            <Pie
-            data={[
-                { name: 'Present', value: latestData.students.filter(s => s.status === 'Present').length },
-                { name: 'Absent', value: latestData.students.filter(s => s.status === 'Absent').length }
-            ]}
-            dataKey="value"
-            nameKey="name"
-            outerRadius={100}
-            fill="#8884d8"
-            label
-            >
-            <Cell fill="#00C49F" />
-            <Cell fill="#FF6B6B" />
-            </Pie>
-            <Tooltip />
-        </PieChart>
-        </ResponsiveContainer>
+        {showChart && latestData && (
+          <div className="attendance-chart">
+            <h2>Summary for {new Date(latestData.attendance_date).toLocaleDateString()}</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Present', value: latestData.students.filter(s => s.status === 'Present').length },
+                    { name: 'Absent', value: latestData.students.filter(s => s.status === 'Absent').length }
+                  ]}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  label
+                >
+                  <Cell fill="#00C49F" />
+                  <Cell fill="#FF6B6B" />
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
 
-        {/* Download pdf */}
-        <button onClick={downloadAttendancePDF} className="attendance-save-btn">
-            Download PDF
-        </button>
-    </div>
-    )}
+            {/* Download pdf */}
+            <button onClick={downloadAttendancePDF} className="attendance-save-btn">
+              Download PDF
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
