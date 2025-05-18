@@ -3,9 +3,8 @@ const bcrypt = require('bcrypt')
 const { isEmailValid } = require('../utils/emailValidation');
 const jwt = require("jsonwebtoken");
 
-
 // Register a new school teacher
-async function registerSchoolTeacher(full_name, identification_number, email, password, class_assigned) {
+async function registerSchoolTeacher(full_name, identification_number, email, password, classAssigned) {
     const existing = await schoolTeacher.findOne({ identification_number });
 
     if (existing) {
@@ -27,13 +26,14 @@ async function registerSchoolTeacher(full_name, identification_number, email, pa
             identification_number,
             email,
             password: hashedPassword,
-            class_assigned
+            classAssigned
         });
 
         await newTeacher.save();
         return newTeacher;
 
     } catch (err) {
+        console.error("Save failed:", err.message); // Add this
         throw new Error("Unable to save the teacher. Please try again");
     }
 }
