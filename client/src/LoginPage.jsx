@@ -37,23 +37,15 @@ const LoginPage = () => {
   return (
     <div className="login-container" style={{ backgroundImage: 'url(/)' }}>
       <div className="login-card">
-        <div className='sideImg'>
-          <img src ='client/public/image.png'></img>
-           <h1>Early Warning System</h1>
+        <div className="sideImg">
+          <img src="/image.png" alt="EWS Logo" className="logo-img" />
+          <h1 className="logo-text">Early Warning System</h1>
         </div>
-        <h2>Login Now</h2>
-        <p>Hi, welcome back 👋</p>
+        <p className="error-message">Hi, welcome back 👋</p>
 
         {error && <p className="error-message">{error}</p>}
 
         <div className="login-options">
-          <button className="google-login">
-            <FaGoogle className="icon" />
-            Sign in with Google
-          </button>
-
-          <span className="or">or</span>
-
           <input
             type="email"
             className="input-field"

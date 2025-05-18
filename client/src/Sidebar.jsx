@@ -1,5 +1,4 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FaHome,
   FaChalkboardTeacher,
@@ -8,10 +7,12 @@ import {
   FaCog,
   FaSignOutAlt
 } from 'react-icons/fa';
-import './Dashboard.css';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path ? 'nav-item active' : 'nav-item';
 
   return (
     <aside className="sidebar">
@@ -21,14 +22,26 @@ const Sidebar = () => {
           <span>EWS</span>
         </div>
         <nav className="nav">
-          <button className="nav-item" onClick={() => navigate('/dashboard')}><FaHome /> Home</button>
-          <button className="nav-item active" onClick={() => navigate('/attendance')}><FaChalkboardTeacher /> Take Attendance</button>
-          <button className="nav-item" onClick={() => navigate('/incident')}><FaExclamationTriangle /> Report Incident</button>
-          <button className="nav-item"><FaUsers /> Students</button>
-          <button className="nav-item"><FaCog /> Settings</button>
+          <button className={isActive('/dashboard')} onClick={() => navigate('/dashboard')}>
+            <FaHome /> Home
+          </button>
+          <button className={isActive('/attendance')} onClick={() => navigate('/attendance')}>
+            <FaChalkboardTeacher /> Take Attendance
+          </button>
+          <button className={isActive('/incident')} onClick={() => navigate('/incident')}>
+            <FaExclamationTriangle /> Report Incident
+          </button>
+          <button className={isActive('/students')} onClick={() => navigate('/students')}>
+            <FaUsers /> Students
+          </button>
+          <button className={isActive('/settings')} onClick={() => navigate('/settings')}>
+            <FaCog /> Settings
+          </button>
         </nav>
       </div>
-      <button className="nav-item signout" onClick={() => navigate('/')}> <FaSignOutAlt /> Sign Out </button>
+      <button className="nav-item signout" onClick={() => navigate('/')}>
+        <FaSignOutAlt /> Sign Out
+      </button>
     </aside>
   );
 };

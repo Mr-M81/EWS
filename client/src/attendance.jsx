@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import Sidebar from './Sidebar.jsx';
 import './attendance.css';
+
 import {
   PieChart,
   Pie,
@@ -21,6 +22,7 @@ export default function AttendancePage() {
   const [latestData, setLatestData] = useState(null);
   const [teacherName, setTeacherName] = useState('Teacher'); // Added teacherName state
   const navigate = useNavigate();
+  
 
   // Fetch students from backend using token
   useEffect(() => {
@@ -115,6 +117,7 @@ export default function AttendancePage() {
       doc.setFontSize(12);
       doc.text(`Date: ${date}`, 10, 20);
       doc.text(`Teacher: ${teacherName}`, 10, 30);
+      //doc.text(class)
 
       let y = 50;
       doc.text('Student Name', 10, y);
@@ -152,11 +155,21 @@ export default function AttendancePage() {
   // Count summary
   const presentCount = students.filter(s => s.status === 'Present').length;
   const absentCount = students.filter(s => s.status === 'Absent').length;
+  const Banner = ({ teacherName }) => (
+  <section className="banner">
+    <div className="banner-text">
+      <h1></h1>
+    </div>
 
+  </section>
+);
   return (
+    
     <div className="attendance-page">
       <Sidebar />
       <main className="attendance-main">
+        <Banner teacherName={teacherName} />
+
         <div className="attendance-wrapper">
           <h1 className="attendance-title">Attendance Register</h1>
           <p className="attendance-date">{date}</p>
@@ -236,6 +249,11 @@ export default function AttendancePage() {
           </div>
         )}
       </main>
+      <img
+          src="/image copy.png"
+          alt="Decorative attendance art"
+          className="bottom-right-decor"
+        />
     </div>
   );
 }

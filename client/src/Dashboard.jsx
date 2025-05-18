@@ -14,53 +14,17 @@ import {
   FaSun,
 } from 'react-icons/fa';
 import './Dashboard.css';
+import Sidebar from './Sidebar.jsx';
 
-// Sidebar navigation - now accepting navigate as a prop
-const Sidebar = ({ navigate }) => (
-  <aside className="sidebar">
-    <div>
-      <div className="logo">
-        <FaChalkboardTeacher size={28} />
-        <span>EWS</span>
-      </div>
-      <nav className="nav">
-        <button className="nav-item active"><FaHome /> Home</button>
-        <button className="nav-item" onClick={() => navigate('/attendance')}>
-            <FaChalkboardTeacher /> Attendance</button>
-        <button className="nav-item"><FaUsers /> Students</button>
-        <button className="nav-item"><FaExclamationTriangle /> At-Risk Students</button>
-        <button className="nav-item"><FaCog /> Settings</button>
-      </nav>
-    </div>
-    <button className="nav-item signout"><FaSignOutAlt /> Sign Out</button>
-  </aside>
-);
 
-// Top header bar
-const Topbar = () => (
-  <header className="topbar">
-    <div className="theme-toggle">
-      <FaSun />
-      <label className="switch">
-        <input type="checkbox" />
-        <span className="slider" />
-      </label>
-      <FaMoon />
-    </div>
-    <button className="icon-btn">
-      <FaBell />
-      <span className="badge">3</span>
-    </button>
-    <button className="icon-btn"><FaCog /></button>
-    <img className="avatar" src="/assets/avatar.jpg" alt="Teacher avatar" />
-  </header>
-);
 
 // Welcome banner with teacher name
 const Banner = ({ teacherName }) => (
   <section className="banner">
-    <h1>Welcome back, {teacherName}!</h1>
-    <img src="/assets/undraw_class.svg" alt="Teacher and students" />
+    <div className="banner-text">
+      <h1>Welcome to Early Warning, {teacherName}!</h1>
+    </div>
+    <img className="banner-img" src="/newimage.png" alt="Smiling student" />
   </section>
 );
 
@@ -118,9 +82,8 @@ export default function Dashboard() {
   return (
     <div className="dashboard-container">
       {/* Pass navigate to Sidebar */}
-      <Sidebar navigate={navigate} />
+      <Sidebar />
       <main className="main-content">
-        <Topbar />
         <Banner teacherName={teacherName} />
 
         <div className="cards-row">

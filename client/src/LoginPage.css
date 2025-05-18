@@ -3,7 +3,6 @@
   --fs-base: 1rem;
   --fs-lg: 1.25rem;
   --fs-xl: 1.75rem;
-  --clr-primary: #0d42e2;
   --clr-secondary: #3a4d85;
   --clr-google: #4285f4;
   --clr-text: #333;
@@ -31,8 +30,14 @@ body {
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  background: url('client/public/image.png') no-repeat center center;
+  background: url('/sonhador-trindade-tW7MI6CjqcM-unsplash.jpg') no-repeat center center;
   background-size: cover;
+}
+.error-message {
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-align: center;
+  
 }
 
 .login-card {
@@ -130,7 +135,7 @@ body {
 }
 
 .login-btn {
-  background-color: var(--clr-secondary);
+  background-color: #58bec2;
   color: #fff;
   border: none;
   padding: 0.75rem;
@@ -149,7 +154,24 @@ body {
 .login-right {
   display: none;
 }
+.sideImg {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* spacing between image and text */
+  margin-bottom: 1rem;
+}
 
+.logo-img {
+  width: 80px; /* Adjust size as needed */
+  height: auto;
+}
+
+.logo-text {
+  font-size: medium;
+  font-weight: bold;
+  color: #58bec2;
+  margin-left: 30px;
+}
 @media (min-width: 768px) {
   .login-container {
     justify-content: space-between;

@@ -29,12 +29,14 @@ body {
 /* ─── SIDEBAR ───────────────────────────────────────────────── */
 .sidebar {
   width: 240px;
-  background: var(--blue);
+  background: #58bec2;
   color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 2rem 1rem;
+  padding-top: 60px;
+  border-radius: 5%;
 }
 
 .logo {
@@ -150,7 +152,7 @@ input:checked + .slider::before {
 
 /* ─── BANNER ────────────────────────────────────────────────── */
 .banner {
-  background: var(--blue);
+  background: linear-gradient(to right, #58bec2 30%, transparent 100%);
   color: #fff;
   border-radius: var(--radius);
   margin: 1rem 2rem;
@@ -158,12 +160,30 @@ input:checked + .slider::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
 }
-.banner h1 {
+
+.banner-text {
+  z-index: 2;
+}
+
+.banner-text h1 {
   font-size: 1.75rem;
+  color: #fff;
+  margin: 0;
 }
-.banner img {
-  max-height: 80px;
+
+.banner-img {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  max-width: 50%;
+  object-fit: cover;
+  z-index: 1;
+  opacity: 0.9;
 }
 
 /* ─── CARDS GRID ───────────────────────────────────────────── */
